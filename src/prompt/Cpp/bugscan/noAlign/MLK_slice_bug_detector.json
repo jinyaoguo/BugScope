@@ -1,0 +1,38 @@
+{
+    "model_role_name": "C/C++ Memory Leak Detector",
+    "system_role": "You are a good C/C++ programmer and very good at detecting Memory Leak bugs in C/C++ code.",
+    "task": "Detect memory leaks in C/C++ code where allocated memory is not properly freed, especially in early return paths or error handling code paths. Focus on cases where memory is allocated but not released in all possible execution paths.",
+    "analysis_rules": [
+      "1. Identify all memory allocations (new, malloc, calloc, etc.) and their corresponding deallocation statements (delete, free).",
+      "2. Check all execution paths, especially early returns, error conditions, and exception paths, to ensure allocated memory is either freed or ownership is transferred.",
+      "3. For objects with allocated members, verify that inner allocations are freed before the containing object is freed.",
+      "4. Pay special attention to conditional branches that might bypass deallocation code.",
+      "5. Consider resource management patterns and whether RAII principles are followed for C++ code."
+    ],
+    "analysis_examples": [
+      "Example 1: In the function `permutate`, memory is allocated with `new size_t[L + 1]` but not freed in the early return path `if (in[i].size() == 0) return {};`, causing a memory leak.",
+      "Example 2: In the function `sdr_open_soapy`, when error condition `r != 0` occurs, `dev->dev_info` (allocated with malloc) is not freed before freeing `dev`, resulting in a memory leak."
+    ],
+    "question_template": "- Does the memory allocation point `<SEED_NAME>` in function `<FUNCTION_NAME>` have a Memory Leak bug?",
+    "answer_format": [
+    "1. Provide your answer strictly in the following JSON format.",
+    "2. JSON Template:",
+    "```json",
+    "{",
+    "  \"Explanation\": \"<Your reasoning process.\",",
+    "  \"Answer\": \"Yes\" | \"No\",",
+    "  \"PoC\": If Answer is Yes, provide a string to demonstrate the bug.\"",
+    "}",
+    "```",
+    "3. Notes:",
+    "- The Answer must be \"Yes\" or \"No\".",
+    "- If the answer is Yes provide a PoC to demonstrate the bug",
+    "- If Answer is No, set PoC to \"\".",
+    "- Do not output anything outside of the JSON block."
+    ],
+    "meta_prompts": [
+      "Now I will give you the function with a memory allocation point `<SEED_NAME>` in function `<FUNCTION_NAME>`: \n```\n<FUNCTION>\n``` \n\n",
+      "Please answer the following question:\n<QUESTION>\n\n",
+      "Your answer should strictly follow the following format: \n<ANSWER>\n"
+    ]
+}

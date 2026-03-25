@@ -1,0 +1,47 @@
+from tstool.analyzer.TS_analyzer import *
+from tstool.analyzer.Cpp_TS_analyzer import *
+from ..bugscan_extractor import *
+
+
+class Cpp_BUF_Extractor(BugScanExtractor):
+    def find_seeds(self, function: Function) -> List[Tuple[Value, bool]]:
+        root_node = function.parse_tree_root_node
+        source_code = self.ts_analyzer.code_in_files[function.file_path]
+        file_name = function.file_path
+
+        nodes= find_nodes_by_type(root_node, "subscript_expression")
+        nodes.extend(find_nodes_by_type(root_node, "call_expression"))
+        nodes.extend(find_nodes_by_type(root_node, "pointer_expression"))
+
+        # mem_operations = {"memcpy", "memset", "strndup"}
+        # spec_apis = {"zend_strndup", "malloc0", "XMALLOC"}          # specific user-defined APIs
+        spec_apis = {"zend_strndup"}
+        mem_operations = {}
+        seeds = []
+        for node in nodes:
+            is_seed_node = False
+            if node.type == "subscript_expression":
+                for child in node.children:
+                    if child.type == "subscript_argument_list":
+                        index = child.children[1].text.decode("utf8")
+                        if not index.isdigit():
+                            is_seed_node = True
+            if node.type == "call_expression":
+                for child in node.children:
+                    if child.type == "identifier":
+                        name = child.text.decode("utf8")
+                        if name in mem_operations or name in spec_apis:
+                            is_seed_node = True
+            if node.type == "pointer_expression" and node.children[0].type == "*":
+                is_seed_node = True
+
+            if is_seed_node:
+                line_number = source_code[: node.start_byte].count("\n") + 1
+                name = node.text.decode("utf8")
+                if "\n" in name:
+                    name_lines = name.split("\n")
+                    for line in name_lines:
+                        line = line.strip()
+                    name = "".join(name_lines)
+                seeds.append((Value(name, line_number, ValueLabel.BUF_ACCESS_EXPR, file_name), True))
+        return seeds

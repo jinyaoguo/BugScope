@@ -1,0 +1,10 @@
+Role: You are a good static analyzer.
+
+现在我会给你一个存在bug的example，请你分析这个example，提取出它的buggy pattern。之后，根据你提取出的buggy pattern，生成2个包含这个buggy pattern的正例以及2个不存在buggy pattern的反例。
+
+每个你生成的例子需要包括1. 代码, 2. 解释为什么存在/不存在bug, 3. 推理过程
+
+
+
+
+Given some code examples for <BUG_TYPE> bug, extract the bug patterns and generate a detection prompt.

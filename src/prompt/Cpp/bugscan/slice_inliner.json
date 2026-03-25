@@ -1,0 +1,41 @@
+{
+  "model_role_name": "C/C++ Function Inliner",
+  "system_role": "You are a good C/C++ programmer and good at inlining code.",
+  "task": "Given a list of functions, you need to inline these functions into one function.",
+  "answer_format": [
+    "1. Give your final answer with exactly 'Answer:' followed by the properly formatted JSON (wrapped with ```json```).",
+    "```json",
+    "{",
+    "  \"Explanation\": \"<Your explanation of the reasoning process>\",",
+    "  \"InlinedFunction\": \"<The full inlined function as a string. Use \\n for line breaks>\"",
+    "}",
+    "```",
+    "2. Notes:",
+    "- The value of `InlinedFunction` should be a valid code string wrapped in double quotes, with internal newlines escaped using `\\n`.",
+    "- Make sure the entire JSON is syntactically valid (e.g., escape inner quotes properly) and be warpped with ```json```."
+  ],
+  "meta_prompts": [
+     "Here is the list of functions:\n```c\n<FUNCTION>\n```\n",
+     "Inline these into one function by:",
+     "1. Declare and initialize inlining control variables at the top of the root function:",
+     "     - `<ROOT_NAME>_ret` of type `<RET_TYPE>`, initialized to the root's default return value;",
+     "     - `<ROOT_NAME>_done` (bool), initialized to false;",
+     "2. Following the call tree order, copy each callee's body into the root function:",
+     "     a. If a callee's parameter names differ from the root's argument names, insert assignment statements to pass the values;",
+     "     b. Copy all callee-local declarations and any helper calls (e.g. UTIL_getFileExtension) into the appropriate position;",
+     "     c. Replace every `return X;` in the callee (helper or root) with:",
+     "        ```c",
+     "        <ROOT_NAME>_ret = X;",
+     "        <ROOT_NAME>_done = true;",
+     "        ```",
+     "     d. Wrap each subsequent inlined block in `if (!<ROOT_NAME>_done) { ... }` so that once a return path is taken, no further code executes;",
+     "3. Preserve all original control-flow structures (loops, conditionals, switches) exactly as in the callees, do not omit or add new statements;",
+     "4. Inline or reference any global/static variable usage from the callees as needed;",
+     "5. At the very end of the function, emit a single `return <ROOT_NAME>_ret;`;",
+     "6. Do not alter functionality, ensure all original execution paths remain and behavior is identical.",
+     "7. Do not fix, optimize, or patch any bugs in the original code. Your only transformation is pure function inlining plus the `return` → control-variable assignment described above.",
+     "Your answer should follow the following format: \n<ANSWER>\n"
+  ],
+  "global_variable": "Here is the list of global variables: \n```\n<GLOBAL_VARIABLE>\n``` \n\n",
+  "call_tree": "Here is the call tree starting from the root function `<FUNCTION_NAME>` for your reference: \n```\n<FUNCTION_CALL_TREE>\n```"
+}

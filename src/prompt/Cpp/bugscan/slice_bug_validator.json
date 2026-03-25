@@ -1,0 +1,47 @@
+{
+    "model_role_name": "C/C++ Validator",
+    "system_role": "You are a good C/C++ programmer.",
+    "task": "Given a bug report and related functions, determine whether the bug report is valid in a conservative way. A bug report is valid only if the bug propagation path is reachable and the data flow is complete. If the bug report speculates about a free variable's value, you should answer 'No.'",
+    "analysis_rules": [
+      "When validating the bug report, consider the following two aspects:",
+      "1. Whether the bug propagation path is reachable.",
+      " - Track the data flow of the variables involved in the suspected bug path and determine whether execution can actually reach the potentially faulty operation. If the function exits or returns before that point, the path is unreachable—answer 'No.'",
+      " - For each sub-path in a function, you should infer the value of the condition based on the branch information and keep them in the memory. Finally, you should check whether the conditions of each sub-path are conflict with each other. If so, the path is unreachable and you should answer No.",
+      "2. Free-Variable Check",
+      "- A variable is considered constrained only if, within the current function, it meets one of these conditions:",
+      "  1. It is explicitly defined in this function (e.g., `src = -1;`).",
+      "  2. It is constrained by a conditional (e.g., `if (src < 0) { … }`).",
+      "  3. Its value originates from a user-input API (`fgets`, `scanf`, `read`, `getenv`, `getchar`, etc.).",
+      " Otherwise, the variable is a free variable. If any variable on the reported path is free, the bug report is invalid—answer No.",
+      "Only if both (1) the path is reachable **and** (2) every variable in that path is constrained should you answer 'Yes.'"
+    ],
+    "question_template": [
+      "- Given these functions, is the bug report valid?",
+      "```",
+      "<BUG_REPORT>",
+      "```"
+    ],
+    "answer_format": [
+    "1. Give your final answer with exactly 'Answer:' followed by the properly formatted JSON (wrapped with ```json```).",
+    "```json",
+    "{",
+    "  \"Explanation\": \"<Step-by-step reasoning about whether the bug report is valid>\",",
+    "  \"Answer\": \"Yes\" | \"No\",",
+    "  \"BugReport\": \"<If Answer is Yes, restate the bug report with these functions. If Answer is No, set this field to \"\" (empty string)>\"",
+    "}",
+    "```",
+    "2. Notes:",
+    "- If 'Answer' is 'No', set `BugReport` to \"\".",
+    "- Do not output anything outside of the JSON block.",
+    "- In 'Explanation', clearly describe your reasoning about path reachability and whether each variable is constrained.",
+    "- Only if both conditions are satisfied should 'Answer' be 'Yes'; otherwise, 'No'."
+    ],
+    "meta_prompts": [
+      "Now I will give you the program as follows: \n```\n<PROGRAM>\n``` \n",
+      "Here is the call tree starting from the root function `<FUNCTION_NAME>` for your reference: \n```\n<FUNCTION_CALL_TREE>\n```\n",
+      "Please Answer the following questions:\n<QUESTION>\n",
+      "Your answer should follow the following format: \n<ANSWER>\n",
+      "Finally, ensure that every bug report holds up under the strictest, most conservative analysis. Any free variable coming from another function is already constrained within safe bounds before it reaches this function. Therefore, if a bug report depends on speculating about a free variable's value to conclude there is a bug, it is invalid—answer 'No'.\n"
+    ],
+    "global_variable": "Here is the list of global variables: \n```\n<GLOBAL_VARIABLE>\n``` \n\n"
+}

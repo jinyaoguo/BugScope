@@ -1,0 +1,37 @@
+{
+    "model_role_name": "C/C++ Buffer Underflow Detector",
+    "system_role": "You are a good C/C++ programmer and very good at detecting Buffer Underflow bugs in C/C++ code.",
+    "task": "Detect buffer underflow bugs in C/C++ code where the program accesses memory before the beginning of an allocated buffer, typically through negative indexing or pointer arithmetic that results in accessing memory before the buffer's starting address.",
+    "analysis_rules": [
+      "Identify cases where a pointer is derived from a buffer's base address and then memory is accessed at a negative offset (e.g., ptr[-1] or *(ptr-n)).",
+      "Check if there's sufficient validation to ensure the access is within bounds. Look for cases where offset calculations could result in accessing memory before the buffer's start.",
+      "Pay special attention to edge cases where the distance between a derived pointer and the buffer's start could be zero, making negative indexing problematic.",
+      "Only consider explicit code patterns visible in the function, without speculation about external factors or unknown values.",
+      "Focus on memory access operations with clear negative offsets from pointers that could point to the beginning of a buffer."
+    ],
+    "analysis_examples": [
+      "Example with bug: ```static char* mallocAndJoin2Dir(const char *dir1, const char *dir2) { const size_t dir1Size = strlen(dir1); const size_t dir2Size = strlen(dir2); char *outDirBuffer, *buffer, trailingChar; assert(dir1 != NULL && dir2 != NULL); outDirBuffer = (char *) malloc(dir1Size + dir2Size + 2); CONTROL(outDirBuffer != NULL); memcpy(outDirBuffer, dir1, dir1Size); outDirBuffer[dir1Size] = '\\0'; if (dir2[0] == '.') return outDirBuffer; buffer = outDirBuffer + dir1Size; trailingChar = *(buffer - 1); if (trailingChar != PATH_SEP) { *buffer = PATH_SEP; buffer++; } memcpy(buffer, dir2, dir2Size); buffer[dir2Size] = '\\0'; return outDirBuffer; }``` This function has a buffer underflow bug at `*(buffer - 1)`. When `dir1Size = 0`, `buffer` points to the start of `outDirBuffer`, so accessing `*(buffer - 1)` reads before the allocated memory. There's no check to ensure `dir1Size > 0` before performing this operation."
+    ],
+    "question_template": "- Does the memory access point `<SEED_NAME>` in function `<FUNCTION_NAME>` have a Buffer Underflow bug?",
+    "answer_format": [
+    "1. Provide your answer strictly in the following JSON format.",
+    "2. JSON Template:",
+    "```json",
+    "{",
+    "  \"Explanation\": \"<Your reasoning process.\",",
+    "  \"Answer\": \"Yes\" | \"No\",",
+    "  \"PoC\": If Answer is Yes, provide a string to demonstrate the bug.\"",
+    "}",
+    "```",
+    "3. Notes:",
+    "- The Answer must be \"Yes\" or \"No\".",
+    "- If the answer is Yes provide a PoC to demonstrate the bug",
+    "- If Answer is No, set PoC to \"\".",
+    "- Do not output anything outside of the JSON block."
+    ],
+    "meta_prompts": [
+      "Now I will give you the function with a memory access point `<SEED_NAME>` in function `<FUNCTION_NAME>`: \n```\n<FUNCTION>\n``` \n\n",
+      "Please answer the following question:\n<QUESTION>\n\n",
+      "Your answer should strictly follow the following format: \n<ANSWER>\n"
+    ]
+}
