@@ -1,0 +1,22 @@
+{
+    "bug_type": "Divide By Zero (IZC)",
+    "pattern_description": "",
+    "examples": [
+        {
+            "label": "Positive",
+            "code": "int s_div(char *s) {\n    int a = s->sum;\n    if (a < 0) {\n        return 0;  // avoids negative values\n    }\n    return 100 / a;\n}",
+            "description": "The code checks that a \u2265 0 in the division point, but it does not prevent a == 0. Division by 0 can still occur, so a divide\u2011by\u2011zero error must be reported."
+        },
+        {
+            "label": "Negative",
+            "code": "int maybe_div(int x, int y) {\n    int z = y - 1;\n    if (z <= 0) return -1;\n    return x / z;\n}",
+            "description": "The check z \u2264 0 prevents z from ever being 0, so no divide\u2011by\u2011zero error can occur on x / z."
+        },
+        {
+            "label": "Negative",
+            "code": "void compute(STRUCT *c) {\n    int d = c->len;\n    int result = c->value / d;\n    use(result);\n}",
+            "description": "Here, d is populated from a struct member and never explicitly assigned or bounded by a check inside the given function. Without any checks or constants, we cannot determine whether d could be zero\u2014so by our conservative policy, this is classified as safe."
+        }
+    ],
+    "created_at": "2025-07-19 12:35:47.446961"
+}

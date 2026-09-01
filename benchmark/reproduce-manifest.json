@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "benchmark_root": "benchmark/Reproduce/Cpp",
+  "projects": [
+    {
+      "id": "OOB/curl",
+      "source": {"type": "git", "url": "https://github.com/curl/curl", "commit": "e0c68f02552511df57f2afec2e62bc3ee684e12f"},
+      "cases": [
+        {"bug_type": "NOF", "path": "lib/sendf.c", "lines": [253, 277], "sha256": "0d105bd4c693c1f42b69986f87dc83e94a98538e137bfb0eeafbe09d72a961f5"}
+      ]
+    },
+    {
+      "id": "OOB/openssl",
+      "source": {"type": "git", "url": "https://github.com/openssl/openssl.git", "commit": "2837b19fcba4bf4ff2ecdc8435c650bf18c27552", "patch": "benchmark/patches/OOB-openssl.patch"},
+      "cases": [
+        {"bug_type": "NOF", "path": "crypto/bf/bf_ofb64.c", "lines": [55], "sha256": "6690d2aeea358ef1f2e5ffc9ac57844d0a4fd74d4e201f540d33252fcdfd711f"}
+      ]
+    },
+    {
+      "id": "OOB/qemu",
+      "source": {"type": "git", "url": "https://gitlab.com/qemu-project/qemu.git", "commit": "232e9255478f3849957d2f4b083d6e5d4736ab04"},
+      "cases": [
+        {"bug_type": "OSO", "path": "contrib/elf2dmp/qemu_elf.c", "lines": [66], "sha256": "2735ac97fb2b2cde904fbb492028d6c8b80bc76210ebe4a180339186eadbdc81"}
+      ]
+    },
+    {
+      "id": "OOB/redis",
+      "source": {"type": "git", "url": "https://github.com/redis/redis.git", "commit": "93dda65354e502e8b8db07f85b668710dd0aac68"},
+      "cases": [
+        {"bug_type": "OSO", "path": "src/t_zset.c", "lines": [727], "sha256": "2a675b70c5006aa4eb36dfd8e40421e5b08e85c6eee987abcd4dfd7e408e3c68"}
+      ]
+    },
+    {
+      "id": "OOB/systemd",
+      "source": {"type": "git", "url": "https://github.com/systemd/systemd.git", "commit": "fa2ba7aea87ad1812f730f0c2ad86fbfe2ca6552"},
+      "cases": [
+        {"bug_type": "ASO", "path": "src/libsystemd-network/ndisc-router.c", "lines": [24], "sha256": "08e74711fcb2e67e0cfda7bcd2f1dfcdf255a42b26ca1968c61cec433b8cb3ee"},
+        {"bug_type": "OSO", "path": "src/basic/time-util.c", "lines": [600], "sha256": "19551d7b99d4eee2c01b53fe7ca2a4b26163693626c9d33205ab79b7099f3d5f"}
+      ]
+    },
+    {
+      "id": "OOB/zstd",
+      "source": {"type": "git", "url": "https://github.com/facebook/zstd.git", "commit": "e5db7c93f51992b10feb2fa64daa79c04e05574b"},
+      "cases": [
+        {"bug_type": "OSO", "path": "programs/util.c", "lines": [563], "sha256": "7bdaddf89ee61ed263047df3c4dfa131df186cbec251a90f9a17f787cb83bcd6"},
+        {"bug_type": "NOF", "path": "programs/util.c", "lines": [888], "sha256": "7bdaddf89ee61ed263047df3c4dfa131df186cbec251a90f9a17f787cb83bcd6"}
+      ]
+    },
+    {
+      "id": "OOB/bfdd",
+      "source": {"type": "git", "url": "https://github.com/FRRouting/frr.git", "commit": "26b2fbf47914545dc7688ef7943e5396a77f8b10", "subdirectory": "bfdd"},
+      "cases": [
+        {"bug_type": "ASO", "path": "control.c", "lines": [451], "sha256": "a6d46cc4259ce053d8f8425f2eda7c2a307d74fb5981e6eff1b95d697d19c2d3"}
+      ]
+    },
+    {
+      "id": "OOB/zebra",
+      "source": {"type": "git", "url": "https://github.com/FRRouting/frr.git", "commit": "26b2fbf47914545dc7688ef7943e5396a77f8b10", "subdirectory": "zebra"},
+      "cases": [
+        {"bug_type": "OSO", "path": "kernel_netlink.c", "lines": [611], "sha256": "5660268a50125f94c6c9e92e7bf2cef3aba21fa358dfa428b49b72775c716152"}
+      ]
+    },
+    {
+      "id": "OOB/sapi",
+      "source": {"type": "git", "url": "https://github.com/php/php-src.git", "commit": "492f9c607a3e0ee258d1273fbc6d6da73f180e3c", "subdirectory": "sapi"},
+      "cases": [
+        {"bug_type": "ASO", "path": "cli/php_cli_server.c", "lines": [2424], "sha256": "976ce8580f5179b69522c96ac0d1d43df51f29cf3fc9a2971c3577ecafe6c38d"}
+      ]
+    },
+    {
+      "id": "OOB/opcache",
+      "source": {"type": "git", "url": "https://github.com/php/php-src.git", "commit": "492f9c607a3e0ee258d1273fbc6d6da73f180e3c", "subdirectory": "ext/opcache"},
+      "cases": [
+        {"bug_type": "NOF", "path": "zend_accelerator_blacklist.c", "lines": [293], "sha256": "8acc627787d3673edbc366b2a51db6904c11f8ad493e7314579bba22cfd3972a"}
+      ]
+    },
+    {
+      "id": "OOB/libcpp",
+      "source": {"type": "git", "url": "https://github.com/gcc-mirror/gcc.git", "commit": "9715f10c0651c9549b479b69d67be50ac4bd98a6", "subdirectory": "libcpp"},
+      "cases": [
+        {"bug_type": "ASO", "path": "files.cc", "lines": [2059], "sha256": "1cada2f1c36e63a8105e09f6bebb70d72c0469d59b9bf93327edd585f9b25149"}
+      ]
+    },
+    {
+      "id": "OOB/ld",
+      "source": {"type": "git", "url": "https://sourceware.org/git/binutils-gdb.git", "commit": "4bb461e42c556fc9804937f70e3f2fc1534732d2", "subdirectory": "ld"},
+      "cases": [
+        {"bug_type": "ASO", "path": "libdep_plugin.c", "lines": [117], "sha256": "7611d20e035838cda6d0fa119d412293fa40984b4bc2ce859e14454a9caf795f"}
+      ]
+    },
+    {
+      "id": "DBZ/libuv",
+      "source": {"type": "git", "url": "https://github.com/libuv/libuv.git", "commit": "af1a79cf490dc805be8b91d719a6aef4dc8fcf0d"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "IZC", "path": "src/unix/linux-core.c", "lines": [858], "sha256": "bdffcc7cf4424ce8a04fa0f631ee99173fd6f87db2151a3fde6639d6fcf23fe8"}
+      ]
+    },
+    {
+      "id": "DBZ/goaccess",
+      "source": {"type": "git", "url": "https://github.com/allinurl/goaccess.git", "commit": "0abddd5f09ea6385b8bc2b6b1e0d13e438c1697c"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "LZD", "path": "src/gholder.c", "lines": [450, 561], "sha256": "ddb3d58fecfe98fce2caa50ba42548aea813f55d42ca11288d0a89e5a7afc97b"}
+      ]
+    },
+    {
+      "id": "DBZ/systemd",
+      "source": {"type": "git", "url": "https://github.com/systemd/systemd.git", "commit": "f6e40037a0c6f027fd30e141092dd4982cc56050"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "IZC", "path": "src/shared/creds-util.c", "lines": [675], "sha256": "a90ac6a9eafe06777ae347cdc80ead31cd47ece0bcbb1567fb4b867b0e3fba3e"}
+      ]
+    },
+    {
+      "id": "DBZ/vim",
+      "source": {"type": "git", "url": "https://github.com/vim/vim.git", "commit": "ccfb7c6758510e0fe5f390149ea14aee6ff4f55e"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "IZC", "path": "src/misc2.c", "lines": [170], "sha256": "9ebee66ef7a9821ff123201367ac4fbe7fae6b44790a50c4ae489b0d1e2d6287"}
+      ]
+    },
+    {
+      "id": "DBZ/openssl",
+      "source": {"type": "git", "url": "https://github.com/openssl/openssl.git", "commit": "bc8c36272067f8443f875164831ce3a5a739df3f"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "IZC", "path": "crypto/pkcs12/p12_key.c", "lines": [149], "sha256": "f0be15bbed34ce582d29dfee20a8422ef6ce6ee453bfbde698b64a8be249a9ae"}
+      ]
+    },
+    {
+      "id": "DBZ/git",
+      "source": {"type": "git", "url": "https://github.com/git/git.git", "commit": "49ac1d33bbd9d4be4ad8cb9730a07c086f688a5b"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "IZC", "path": "builtin/pack-objects.c", "lines": [2107], "sha256": "485f8befc5d737a26a96109f03c33652daf8182c42b175f7ae2f7a8fc4586fae"}
+      ]
+    },
+    {
+      "id": "DBZ/MagickCore",
+      "source": {"type": "git", "url": "https://github.com/ImageMagick/ImageMagick.git", "commit": "442c87b9f403a78e0a4aaa47a97d1996da377f1a", "subdirectory": "MagickCore"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "IZC", "path": "cache.c", "lines": [2705, 3722], "sha256": "1cc9bbf2f8339dfc3f8973ac185aeccaf3b6b8d4ca0acd9f1167290ed0d046a4"}
+      ]
+    },
+    {
+      "id": "DBZ/gdb",
+      "source": {"type": "git", "url": "https://sourceware.org/git/binutils-gdb.git", "commit": "2005aa0281fccd53ad867ead783aa417516cf39c", "subdirectory": "gdb"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "IZC", "path": "amd64-tdep.c", "lines": [572], "sha256": "ad25879af73cecad38ab50ba474d35a6745ffafeb06c9b3ebee5a8a5c4ff10e5"}
+      ]
+    },
+    {
+      "id": "DBZ/lib",
+      "source": {"type": "git", "url": "https://github.com/torvalds/linux.git", "commit": "9e9b451593b161403aedf15eef8ced62dba65f40", "subdirectory": "lib"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "LZD", "path": "math/rational.c", "lines": [82], "sha256": "39911763095897bc873202cdc21b271b36d57115cd1ee69b67158c0a9a3a2d8e"}
+      ]
+    },
+    {
+      "id": "DBZ/block",
+      "source": {"type": "git", "url": "https://github.com/torvalds/linux.git", "commit": "9e9b451593b161403aedf15eef8ced62dba65f40", "subdirectory": "block"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "IZC", "path": "blk-mq-cpumap.c", "lines": [21], "sha256": "e887a706aae95881385195196a7d769c1594863c7a0b0d2a0099174c54194794"}
+      ]
+    },
+    {
+      "id": "DBZ/agp",
+      "source": {"type": "git", "url": "https://github.com/torvalds/linux.git", "commit": "9e9b451593b161403aedf15eef8ced62dba65f40", "subdirectory": "drivers/char/agp"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "LZD", "path": "isoch.c", "lines": [241], "sha256": "fc1437118add707024e9b073554add67b2ced06843b52be292e83a38f5e6e115"}
+      ]
+    },
+    {
+      "id": "DBZ/video",
+      "source": {"type": "git", "url": "https://github.com/torvalds/linux.git", "commit": "9e9b451593b161403aedf15eef8ced62dba65f40", "subdirectory": "drivers/video"},
+      "cases": [
+        {"bug_type": "DBZ", "subtype": "LZD", "path": "logo/pnmtologo.c", "lines": [122], "sha256": "2a483d0390521060634e9cacc92422f6b42d5499b6a05e88a3f9fed181b3ed41"}
+      ]
+    },
+    {
+      "id": "MLK/memcached",
+      "source": {"type": "git", "url": "https://github.com/memcached/memcached.git", "commit": "e15e1d6b967eed53ddcfd61c0c90c38d0b017996"},
+      "cases": [
+        {"bug_type": "MLK", "subtype": "UEC", "path": "memcached.c", "lines": [4629], "sha256": "bac9f548b632106e3c78ade33134f2bb150d258378d7a204a85b0bf9c0321288"}
+      ]
+    },
+    {
+      "id": "MLK/memcached-2",
+      "source": {"type": "git", "url": "https://github.com/memcached/memcached.git", "commit": "6fb5ef76014a32f9e13ad54f4ea10c87614252fa"},
+      "cases": [
+        {"bug_type": "MLK", "subtype": "UEC", "path": "restart.c", "lines": [], "sha256": "563b4334faccf19eeb6b73899d264d894bcffd023221e7855c33ed5798d1df68"}
+      ]
+    },
+    {
+      "id": "MLK/libsass",
+      "source": {"type": "git", "url": "https://github.com/sass/libsass.git", "commit": "4da7c4bd13b8e9e5cd034f358dceda0bbba917d2"},
+      "cases": [
+        {"bug_type": "MLK", "subtype": "UEC", "path": "src/permutate.hpp", "lines": [], "sha256": "99c06f00205884b987aff7760f2d0ba57f56660e450e39fc49a7de5f6716563b"}
+      ]
+    },
+    {
+      "id": "MLK/libuv",
+      "source": {"type": "git", "url": "https://github.com/libuv/libuv.git", "commit": "98a4bab92a1d114b22445a413a0dd991841ade61"},
+      "cases": [
+        {"bug_type": "MLK", "subtype": "MSC", "path": "docs/code/plugin/main.c", "lines": [], "sha256": "9063f1a056cded879412b3c08308bfce42deb4a2c4f7a54a8725656b09eaa526"}
+      ]
+    },
+    {
+      "id": "MLK/rtl_433",
+      "source": {"type": "git", "url": "https://github.com/merbanan/rtl_433.git", "commit": "474feb5356e0bbde8501bb0e79a38b7753a78b60"},
+      "cases": [
+        {"bug_type": "MLK", "subtype": "MSC", "path": "src/sdr.c", "lines": [], "sha256": "7a7d2ed5a40b9aeeace341c5d2788ccc0cf0a9d5fd87586b35d609e54d5de25b"}
+      ]
+    },
+    {
+      "id": "MLK/TrinityEmulator",
+      "source": {"type": "git", "url": "https://github.com/TrinityEmulator/TrinityEmulator.git", "commit": "ad254607f3ee34f45daffd2bc761d2c7c198e4d6"},
+      "cases": [
+        {"bug_type": "MLK", "subtype": "MSC", "path": "contrib/elf2dmp/main.c", "lines": [], "sha256": "6898d189c81596a5fb2ffe1e437ae51711445676c770b9eb9b127e96c3c9f5d5"},
+        {"bug_type": "MLK", "subtype": "UEC", "path": "contrib/elf2dmp/main.c", "lines": [], "sha256": "6898d189c81596a5fb2ffe1e437ae51711445676c770b9eb9b127e96c3c9f5d5"}
+      ]
+    },
+    {
+      "id": "MLK/h3",
+      "source": {"type": "git", "url": "https://github.com/uber/h3.git", "commit": "3a02395d90fa301459c0554a30229e03673952c0"},
+      "cases": [
+        {"bug_type": "MLK", "subtype": "UEC", "path": "src/apps/filters/h3.c", "lines": [], "sha256": "23466fdd6f10039f4a2c3a586e7374ace2dbf75d3424331867abb7fab41d10e7"}
+      ]
+    },
+    {
+      "id": "MLK/binutils",
+      "source": {"type": "git", "url": "https://sourceware.org/git/binutils-gdb.git", "commit": "0ebc886149c22aceaf8ed74267821a59ca9d03eb", "subdirectory": "binutils"},
+      "cases": [
+        {"bug_type": "MLK", "subtype": "MSC", "path": "bucomm.c", "lines": [], "sha256": "3d63fc711317e90bad63146961d859401cef9765d7417771035b9e47dae1d583"}
+      ]
+    },
+    {
+      "id": "MLK/mm",
+      "source": {"type": "git", "url": "https://github.com/torvalds/linux.git", "commit": "73b73bac90d97400e29e585c678c4d0ebfd2680d", "subdirectory": "mm"},
+      "cases": [
+        {"bug_type": "MLK", "subtype": "MSC", "path": "damon/reclaim.c", "lines": [], "sha256": "81353c34cb37d37738dcadcae62287893f505d8b72ef9fcc29c18d52deda77b4"}
+      ]
+    },
+    {
+      "id": "MLK/net",
+      "source": {"type": "git", "url": "https://github.com/torvalds/linux.git", "commit": "4cd8371a234d051f9c9557fcbb1f8c523b1c0d10", "subdirectory": "drivers/net"},
+      "cases": [
+        {"bug_type": "MLK", "subtype": "MSC", "path": "ethernet/netronome/nfp/nfpcore/nfp_cppcore.c", "lines": [], "sha256": "148cdec0577fbe6942954c2a457f1669c91431f50a6d4bac1bf55f7812d52ea4"}
+      ]
+    }
+  ]
+}

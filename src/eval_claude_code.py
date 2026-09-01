@@ -9,12 +9,12 @@ Usage:
     unset CLAUDECODE && python eval_claude_code.py --model us.anthropic.claude-3-7-sonnet-20250219-v1:0
 
     # Evaluate only specific bug types
-    unset CLAUDECODE && python eval_claude_code.py --bug-types BOF DBZ --model us.anthropic.claude-3-7-sonnet-20250219-v1:0
+    unset CLAUDECODE && python eval_claude_code.py --bug-types OSO DBZ --model us.anthropic.claude-3-7-sonnet-20250219-v1:0
 
     # Skip synthesis, use built-in fallback prompts directly
     unset CLAUDECODE && python eval_claude_code.py --skip-synthesis --model us.anthropic.claude-3-7-sonnet-20250219-v1:0
 
-    # Reuse previously synthesized prompts (saved as BOF_prompt.json, etc.)
+    # Reuse previously synthesized prompts (saved as OSO_prompt.json, etc.)
     unset CLAUDECODE && python eval_claude_code.py --prompt-dir result/claude_code --model us.anthropic.claude-3-7-sonnet-20250219-v1:0
 
     # Custom output directory
@@ -47,17 +47,23 @@ BASE_PATH = Path(__file__).resolve().parent.parent
 # ---------------------------------------------------------------------------
 # Benchmark files to evaluate
 # ---------------------------------------------------------------------------
-BOF_files = {
-    "../benchmark/Reproduce/Cpp/BUF/curl/lib/sendf.c",
-    "../benchmark/Reproduce/Cpp/AOF/sapi/cli/php_cli_server.c",
-    "../benchmark/Reproduce/Cpp/BUF/opcache/zend_accelerator_blacklist.c",
-    "../benchmark/Reproduce/Cpp/AOF/bfdd/control.c",
-    "../benchmark/Reproduce/Cpp/BOF/redis/src/t_zset.c",
-    "../benchmark/Reproduce/Cpp/AOF/libcpp/files.cc",
-    "../benchmark/Reproduce/Cpp/AOF/ld/libdep_plugin.c",
-    "../benchmark/Reproduce/Cpp/BUF/openssl/crypto/bf/bf_ofb64.c",
-    "../benchmark/Reproduce/Cpp/BOF/qemu/contrib/elf2dmp/qemu_elf.c",
-    "../benchmark/Reproduce/Cpp/BOF/systemd/src/basic/time-util.c",
+OSO_files = {
+    "../benchmark/Reproduce/Cpp/OOB/redis/src/t_zset.c",
+    "../benchmark/Reproduce/Cpp/OOB/qemu/contrib/elf2dmp/qemu_elf.c",
+    "../benchmark/Reproduce/Cpp/OOB/systemd/src/basic/time-util.c",
+}
+
+NOF_files = {
+    "../benchmark/Reproduce/Cpp/OOB/curl/lib/sendf.c",
+    "../benchmark/Reproduce/Cpp/OOB/opcache/zend_accelerator_blacklist.c",
+    "../benchmark/Reproduce/Cpp/OOB/openssl/crypto/bf/bf_ofb64.c",
+}
+
+ASO_files = {
+    "../benchmark/Reproduce/Cpp/OOB/sapi/cli/php_cli_server.c",
+    "../benchmark/Reproduce/Cpp/OOB/bfdd/control.c",
+    "../benchmark/Reproduce/Cpp/OOB/libcpp/files.cc",
+    "../benchmark/Reproduce/Cpp/OOB/ld/libdep_plugin.c",
 }
 
 DBZ_files = {
@@ -79,13 +85,15 @@ MLK_files = {
     "../benchmark/Reproduce/Cpp/MLK/net/ethernet/netronome/nfp/nfpcore/nfp_cppcore.c",
     "../benchmark/Reproduce/Cpp/MLK/mm/damon/reclaim.c",
     "../benchmark/Reproduce/Cpp/MLK/rtl_433/src/sdr.c",
-    "../benchmark/Reproduce/Cpp/MLK/TrinityEmulator-2/hw/express-gpu/egl_display_wgl.c",
+    "../benchmark/Reproduce/Cpp/MLK/h3/src/apps/filters/h3.c",
     "../benchmark/Reproduce/Cpp/MLK/TrinityEmulator/contrib/elf2dmp/main.c",
     "../benchmark/Reproduce/Cpp/MLK/binutils/bucomm.c",
 }
 
 BUG_TYPE_FILES: Dict[str, set] = {
-    "BOF": BOF_files,
+    "OSO": OSO_files,
+    "NOF": NOF_files,
+    "ASO": ASO_files,
     "DBZ": DBZ_files,
     "MLK": MLK_files,
 }
@@ -93,11 +101,14 @@ BUG_TYPE_FILES: Dict[str, set] = {
 # ---------------------------------------------------------------------------
 # Example bug report URLs for prompt synthesis
 # ---------------------------------------------------------------------------
-BOF_examples = [
+OSO_examples = [
     "https://github.com/FRRouting/frr/issues/11624",
     "https://github.com/facebook/zstd/issues/3200",
     "https://github.com/systemd/systemd/issues/23258",
 ]
+
+NOF_examples: List[str] = []
+ASO_examples: List[str] = []
 
 DBZ_examples = [
     "https://lore.kernel.org/linux-block/21cb65d1-b91a-2627-3824-292de3a7553a@suse.de/T/#t",
@@ -110,13 +121,17 @@ MLK_examples = [
 ]
 
 BUG_TYPE_EXAMPLES: Dict[str, List[str]] = {
-    "BOF": BOF_examples,
+    "OSO": OSO_examples,
+    "NOF": NOF_examples,
+    "ASO": ASO_examples,
     "DBZ": DBZ_examples,
     "MLK": MLK_examples,
 }
 
 BUG_TYPE_FULL_NAME: Dict[str, str] = {
-    "BOF": "Buffer Overflow (including out-of-bounds read/write, buffer overrun, allocation size overflow, buffer underflow)",
+    "OSO": "Buffer Overflow (an out-of-bounds read or write beyond the upper bound of a buffer)",
+    "NOF": "Buffer Underflow (a buffer access using a negative offset)",
+    "ASO": "Allocation Size Overflow (allocation-size arithmetic wraps and produces an undersized buffer)",
     "DBZ": "Divide By Zero (integer division or modulo where the divisor could be zero without a proper guard)",
     "MLK": "Memory Leak (dynamically allocated memory via malloc/calloc/realloc/new not freed on all execution paths)",
 }
@@ -298,7 +313,7 @@ Do NOT speculate about variable values or relationships beyond what is explicitl
 
 # Fallback generic prompts if synthesis fails
 FALLBACK_SYSTEM_PROMPTS: Dict[str, str] = {
-    "BOF": """You are a senior C/C++ security auditor specializing in Buffer Overflow detection.
+    "OSO": """You are a senior C/C++ security auditor specializing in Buffer Overflow detection.
 
 Your task is to review the given source code file and detect potential buffer overflow bugs, including:
 - Out-of-bounds read/write
@@ -313,13 +328,13 @@ Detection Rules:
 4. If neither index nor buffer size can be determined from the code, classify as safe (do not speculate).
 
 For each potential bug found, report:
-1. Bug Type (BOF)
+1. Bug Type (OSO)
 2. Location (function name and approximate line number)
 3. Root Cause (brief explanation)
 
 Format your response as:
 === BUG REPORT ===
-Bug Type: BOF
+Bug Type: OSO
 Location: <function_name>, line <number>
 Root Cause: <explanation>
 === END REPORT ===
@@ -666,7 +681,7 @@ def main():
         "--prompt-dir",
         type=str,
         default=None,
-        help="Directory with pre-synthesized prompt JSON files (e.g. BOF_prompt.json)",
+        help="Directory with pre-synthesized prompt JSON files (e.g. OSO_prompt.json)",
     )
     parser.add_argument(
         "--timeout",

@@ -1,0 +1,28 @@
+{
+    "bug_type": "Memory Leak",
+    "pattern_description": "",
+    "examples": [
+        {
+            "label": "Positive",
+            "code": "int goo(int condition) {\n    int result;\n    size_t* base = new size_t(12);\n    if (condition) {\n        result = *base * 3;\n        free(base);\n    }\n    else {\n        base = new size_t(42);\n        result = *base * 3;\n        free(base);\n    }\n    return result;\n}",
+            "description": "The pointer `base` at line 3 is overwritten at line 9 before reaching the free site at line 11. Thus there is a memory leak bug in the function goo when condition is false."
+        },
+        {
+            "label": "Positive",
+            "code": "int foo(mystruct * s) {\n    size_t* base = new size_t(42);\n    if (process(s) < 0>) {\n        return -1;\n    }\n    else {\n        s->base = base;\n    }\n    return 0;\n}",
+            "description": "The pointer `base` at line 2 is not freed and doesn't escape the function foo when the function returns -1 at line 5. Thus there is a memory leak bug in the function foo when process(s) < 0."
+        },
+        {
+            "label": "Negative",
+            "code": "int bar(mystruct * s) {\n    size_t* base = new size_t(42);\n    if (process(s) < 0) {\n        free(base);\n        return -1;\n    }\n    else {\n        s->base = base;\n    }\n    return 0;\n}",
+            "description": "There are two execution paths in the function bar. When process(s) < 0, the pointer `base` is freed at line 5. When process(s) >= 0, the pointer `base` is assigned to s->base at line 8. `s` is the function parameter propagated by the caller function, so the pointer `base` can escape the current function via pointer `s` and be freed later. Thus there is no memory leak bug in the function bar."
+        },
+        {
+            "label": "Negative",
+            "code": "int sample(){\n    int *p = malloc(BUF_SIZE);\n    if (p == NULL) {\n        return -1;\n    }\n    // do something with p\n    x->buf = p;\n    return 0;\n}",
+            "description": "There are two execution paths in the function sample. When p == NULL, the malloc fails, no memory leak occurs. When p != NULL, the pointer `p` is assigned to x->buf at line 7. Since x is not defined in this function, we treat it as a global variable. So the pointer `base` can escape the current function and be freed later. Thus there is no memory leak bug in the function bar."
+        }
+    ],
+    "created_at": "2025-05-15 21:33:34.564221",
+    "updated_at": "2025-07-19 17:07:34.351369"
+}

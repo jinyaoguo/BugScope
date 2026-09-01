@@ -46,7 +46,7 @@ def optimize_page():
 
         # Bug Type Input
         bug_type = st.text_input("Bug Type", 
-                               help="Enter the type of bug (e.g., NPD, BOF, UAF, ML)")
+                               help="Enter the type of bug (e.g., NPD, OSO, UAF, MLK)")
         
         # Current Prompt
         st.subheader("Current Detection Prompt")

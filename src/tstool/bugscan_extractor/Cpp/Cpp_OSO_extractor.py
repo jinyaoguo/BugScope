@@ -3,7 +3,7 @@ from tstool.analyzer.Cpp_TS_analyzer import *
 from ..bugscan_extractor import *
 
 
-class Cpp_BUF_Extractor(BugScanExtractor):
+class Cpp_OSO_Extractor(BugScanExtractor):
     def find_seeds(self, function: Function) -> List[Tuple[Value, bool]]:
         root_node = function.parse_tree_root_node
         source_code = self.ts_analyzer.code_in_files[function.file_path]
@@ -13,9 +13,9 @@ class Cpp_BUF_Extractor(BugScanExtractor):
         nodes.extend(find_nodes_by_type(root_node, "call_expression"))
         nodes.extend(find_nodes_by_type(root_node, "pointer_expression"))
 
-        # mem_operations = {"memcpy", "memset", "strndup"}
-        # spec_apis = {"zend_strndup", "malloc0", "XMALLOC"}          # specific user-defined APIs
-        spec_apis = {"zend_strndup"}
+        # mem_operations = {"memcpy", "memset", "memmove", "strndup"}
+        # spec_apis = {"ngx_memcpy", "ngx_sprintf", "zend_strndup", "malloc0", "XMALLOC"}          # specific user-defined APIs
+        spec_apis = {"memset"}
         mem_operations = {}
         seeds = []
         for node in nodes:

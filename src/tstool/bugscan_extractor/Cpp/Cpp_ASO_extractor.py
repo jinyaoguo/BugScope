@@ -3,37 +3,26 @@ from tstool.analyzer.Cpp_TS_analyzer import *
 from ..bugscan_extractor import *
 
 
-class Cpp_BOF_Extractor(BugScanExtractor):
+class Cpp_ASO_Extractor(BugScanExtractor):
     def find_seeds(self, function: Function) -> List[Tuple[Value, bool]]:
         root_node = function.parse_tree_root_node
         source_code = self.ts_analyzer.code_in_files[function.file_path]
         file_name = function.file_path
 
-        nodes= find_nodes_by_type(root_node, "subscript_expression")
-        nodes.extend(find_nodes_by_type(root_node, "call_expression"))
-        nodes.extend(find_nodes_by_type(root_node, "pointer_expression"))
+        nodes= find_nodes_by_type(root_node, "call_expression")
 
-        # mem_operations = {"memcpy", "memset", "memmove", "strndup"}
-        # spec_apis = {"ngx_memcpy", "ngx_sprintf", "zend_strndup", "malloc0", "XMALLOC"}          # specific user-defined APIs
-        spec_apis = {"memset"}
-        mem_operations = {}
+        mem_allocations = {"malloc", "calloc", "realloc"}
+        spec_apis = {"malloc0", "XMALLOC", "XNEWVAR", "memcpy"}          # specific user-defined APIs
+
         seeds = []
         for node in nodes:
             is_seed_node = False
-            if node.type == "subscript_expression":
-                for child in node.children:
-                    if child.type == "subscript_argument_list":
-                        index = child.children[1].text.decode("utf8")
-                        if not index.isdigit():
-                            is_seed_node = True
             if node.type == "call_expression":
                 for child in node.children:
                     if child.type == "identifier":
                         name = child.text.decode("utf8")
-                        if name in mem_operations or name in spec_apis:
+                        if name in mem_allocations or name in spec_apis:
                             is_seed_node = True
-            if node.type == "pointer_expression" and node.children[0].type == "*":
-                is_seed_node = True
 
             if is_seed_node:
                 line_number = source_code[: node.start_byte].count("\n") + 1

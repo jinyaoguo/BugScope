@@ -1,0 +1,17 @@
+{
+    "bug_type": "Divide By Zero (LZD)",
+    "pattern_description": "",
+    "examples": [
+        {
+            "label": "Positive",
+            "code": "int s_div(char *s) {\n    int a;\n    if (s == NULL) {\n        a = 0;\n    } else {\n        a = strlen(s);\n    }\n    return 100 / a;\n}",
+            "description": "The divisor a is explicitly assigned 0 when s = NULL, causing a divide by zero error."
+        },
+        {
+            "label": "Negative",
+            "code": "void compute(STRUCT *c) {\n    int d = c->len;\n    int result = c->value / d;\n    use(result);\n}",
+            "description": "Here, d is populated from a struct member and never explicitly assigned or bounded by a check inside the given function. Without any checks or constants, we cannot determine whether d could be zero\u2014so by our conservative policy, this is classified as safe."
+        }
+    ],
+    "created_at": "2025-07-19 12:36:52.619627"
+}

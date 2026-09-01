@@ -1,0 +1,17 @@
+{
+    "bug_type": "Allocation Size Overflow",
+    "pattern_description": "",
+    "examples": [
+        {
+            "label": "Positive",
+            "code": "void test_alloc(void) {\n    const char *env = getenv(\"NUM_ITEMS\");\n    if (!env) return;               // no user input\n    long n = atol(env);\n    if (n <= 0) return;             // guard against non-positive\n    size_t total = (size_t)n * sizeof(int);\n    int *arr = malloc(total);\n    arr[n-1] = 0;                    // write at last element\n}",
+            "description": "`env` is obtained via the standard library function `getenv`, which reads the `NUM_ITEMS` environment variable. If `NUM_ITEMS` is set to a value greater than `SIZE_MAX/4` (for example, `(SIZE_MAX/4) + 1`), then `total = ((SIZE_MAX/4) + 1) * 4;` will overflow modulo `SIZE_MAX + 1`, producing `total == 4`. This causes an allocation overflow when `malloc(total)` is called."
+        },
+        {
+            "label": "Negative",
+            "code": "void safe_alloc(size_t count) {\n    size_t total = count * sizeof(double);\n    double *arr = malloc(total);\n    arr[count-1] = 3.14;    \n    free(arr);\n}",
+            "description": "In `safe_alloc`, the allocation size `total` depends on the function parameter `count`, which is not sourced from a documented user-input API (like getenv, fread, read, fgets, or scanf). Because we only assume variable values when they come from those input APIs, and count is neither checked nor bounded within this function\u2014we do not speculate about its value. By our conservative policy, we therefore classify safe_alloc as safe."
+        }
+    ],
+    "created_at": "2025-05-12 16:10:50.578861"
+}

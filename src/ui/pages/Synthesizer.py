@@ -46,7 +46,7 @@ def synthesize_page():
 
         # Bug Type Input
         bug_type = st.text_input("Bug Type", 
-                                 help="Enter the type of bug (e.g., NPD, BOF, UAF, ML)")
+                                 help="Enter the type of bug (e.g., NPD, OSO, UAF, MLK)")
         
         # Pattern Description
         st.subheader("Pattern Description")

@@ -1,0 +1,33 @@
+{
+    "bug_type": "Buffer Overflow (OSO)",
+    "pattern_description": "",
+    "examples": [
+        {
+            "label": "Positive",
+            "code": "int get_index(int x) {\n    if (x > 4) return 4;\n    return x;\n}\n\nvoid test(int x) {\n    char buf[3];\n    int idx = get_index(x);\n    buf[idx] = 'A';\n}",
+            "description": "The code explicitly defines buffer_size = 3 and index x = 4. Since index > buffer_size, we classify it as a buffer\u2011overflow bug."
+        },
+        {
+            "label": "Positive",
+            "code": "void test(int x) {\n    char buf[3];\n    assert(x <= 4);\n    buf[x] = 'A';\n}",
+            "description": "The code explicitly defines buffer_size = 3 and performs a check on index x. This check constrains index to be less than or equal to 4, but still allows index > buffer_size, causing a buffer-overflow bug."
+        },
+        {
+            "label": "Negative",
+            "code": "int process(STRUCT *arr, int idx) {\n    char *buffer = arr->sbuf;\n    buffer[idx] = 'A';\n    return idx;\n}",
+            "description": "The buffer is assigned from the sbuf member of the STRUCT. The index idx is obtained from the function parameter. We cannot see the neumeric defination of buffer size and index, and we cannot find any constraints providing the relation between idx and buffer size. We cannot conclude an overflow with the insufficient information, so we need to classify this path as Safe."
+        },
+        {
+            "label": "Negative",
+            "code": "char* process(int buf_size, const char* path) {\n  char *buffer = malloc(buf_size);\n  if (!buffer) return NULL;\n\n  size_t pathlen = strlen(path);\n  if (pathlen >= (size_t)buf_size) {\n      free(buffer);\n      return NULL;\n  }\n\n  // Copies pathlen characters plus the null terminator\n  memcpy(buffer, path, pathlen + 1);\n  return buffer;\n}",
+            "description": "`pathlen` is at most buf_size - 1 because of the `if (pathlen \u2265 buf_size)` check. We then call `memcpy(buffer, path, pathlen + 1)`, which copies exactly pathlen characters plus the terminating '\\0'. Since pathlen + 1 = buf_size, we have a index = buffer size. But the only write at that offset is '\\0', which is not a problem. So we classify this path as Safe."
+        },
+        {
+            "label": "Negative",
+            "code": "char* process(STRUCT *a) {\n  for (int i = 0; i <= a->argc; i++) {\n      if (a->argv[i] == 'B') {\n          return a->argv[i];\n      }\n  }\n  return NULL;\n}",
+            "description": "The loop runs i from 0 through a->argc, making a->argc the highest index accessed. The buffer in is a->argv, whose size is not defined here. Because neither the buffer's length nor any explicit relationship between a->argc and that length is established or checked in this function, we cannot determine if an out\u2011of\u2011bounds access is possible. By default, we conservatively classify this code as safe."
+        }
+    ],
+    "created_at": "2025-05-11 18:56:14.759532",
+    "updated_at": "2025-05-11 22:05:00.106165"
+}

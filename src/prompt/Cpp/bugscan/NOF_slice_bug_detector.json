@@ -1,5 +1,5 @@
 {
-    "model_role_name": "C/C++ BUF Detector",
+    "model_role_name": "C/C++ NOF Detector",
     "system_role": "You are a C/C++ expert specializing in detecting Buffer Underflow bugs in C/C++ code.",
     "task": "Given a specific buffer access point and related functions, determine whether the buffer access point can cause a Buffer Underflow (index < 0) bug.",
     "analysis_rules": [

@@ -11,7 +11,7 @@ from typing import List
 
 
 default_bugscan_checkers = {
-    "Cpp": ["BOF", "BUF", "AOF", "MLK", "NPD", "UAF", "DBZ", "i2c_msg", "fb_var_screeninfo", "i2c_smbus_data"],
+    "Cpp": ["OSO", "NOF", "ASO", "MLK", "NPD", "UAF", "DBZ"],
 }
 
 class BugScope:

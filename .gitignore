@@ -17,6 +17,12 @@ benchmark/*
 !benchmark/*/toy/**
 !benchmark/*/htop/
 !benchmark/*/htop/**
+!benchmark/README.md
+!benchmark/reproduce-manifest.json
+!benchmark/setup_reproduce.py
+!benchmark/setup_reproduce.sh
+!benchmark/patches/
+!benchmark/patches/**
 
 log/
 tmp/

@@ -1,0 +1,17 @@
+{
+    "bug_type": "Negative Offset",
+    "pattern_description": "",
+    "examples": [
+        {
+            "label": "Positive",
+            "code": "int compute_pos(int x) {\n    if (x < 0) return -2;\n    if (x > 5) return 1;\n    return x - 1;\n}\nvoid test_underflow(int v) {\n    char buf[4];\n    int idx = compute_pos(v);\n    buf[idx] = 'Z';\n}",
+            "description": "In function compute_pos can return -2 when x < 0. Thus index < 0 is possible under the constraints within the provided code, causing a buffer underflow."
+        },
+        {
+            "label": "Negative",
+            "code": "int process(STRUCT *arr, int idx) {\n    char *buffer = arr->sbuf;\n    buffer[idx] = 'A';\n    return idx;\n}",
+            "description": "The index comes directly from a function parameter, and its numeric range is not defined. There are no constraints in the function that bound this index, so it is an unconstrained variable. With insufficient information, we cannot conclude a buffer underflow. Therefore, we classify this path as safe."
+        }
+    ],
+    "created_at": "2025-05-12 15:52:12.770631"
+}
